@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package org.meshtastic.feature.firmware
 
 import android.content.Context
@@ -37,10 +21,7 @@ import javax.inject.Inject
 
 private const val DOWNLOAD_BUFFER_SIZE = 8192
 
-/**
- * Helper class to handle file operations related to firmware updates, such as downloading, copying from URI, and
- * extracting specific files from Zip archives.
- */
+
 class FirmwareFileHandler
 @Inject
 constructor(
@@ -234,4 +215,3 @@ constructor(
         inputStream.use { input -> outputStream.use { output -> input.copyTo(output) } }
     }
 }
-

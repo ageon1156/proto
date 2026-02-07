@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package org.meshtastic.feature.firmware.ota
 
 import co.touchlab.kermit.Logger
@@ -39,14 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.toKotlinUuid
 
-/**
- * BLE transport implementation for ESP32 Unified OTA protocol. Uses Nordic Kotlin-BLE-Library for modern coroutine
- * support.
- *
- * Service UUID: 4FAFC201-1FB5-459E-8FCC-C5C9C331914B
- * - OTA Characteristic (Write): 62ec0272-3ec5-11eb-b378-0242ac130005
- * - TX Characteristic (Notify): 62ec0272-3ec5-11eb-b378-0242ac130003
- */
+
 class BleOtaTransport(private val centralManager: CentralManager, private val address: String) : UnifiedOtaProtocol {
 
     private val transportScope = CoroutineScope(SupervisorJob())
@@ -58,19 +35,10 @@ class BleOtaTransport(private val centralManager: CentralManager, private val ad
 
     private var isConnected = false
 
-    /**
-     * Scan for the device by MAC address with retries. After reboot, the device needs time to come up in OTA mode.
-     *
-     * Note: We scan by address rather than service UUID because some ESP32 OTA bootloaders don't include the service
-     * UUID in their advertisement data - the service is only discoverable after connecting. We verify the OTA service
-     * exists after connection.
-     *
-     * ESP32 bootloaders may use the original MAC address OR increment the last byte by 1 for OTA mode, so we check both
-     * addresses.
-     */
+    
     @OptIn(ExperimentalUuidApi::class)
     private suspend fun scanForOtaDevice(): Peripheral? {
-        // ESP32 OTA bootloader may use MAC address with last byte incremented by 1
+        
         val otaAddress = calculateOtaAddress(address)
         val targetAddresses = setOf(address, otaAddress)
         Logger.i { "BLE OTA: Will match addresses: $targetAddresses" }
@@ -78,8 +46,7 @@ class BleOtaTransport(private val centralManager: CentralManager, private val ad
         repeat(SCAN_RETRY_COUNT) { attempt ->
             Logger.i { "BLE OTA: Scanning for device (attempt ${attempt + 1}/$SCAN_RETRY_COUNT)..." }
 
-            // Scan without service UUID filter - ESP32 OTA bootloader may not advertise the UUID
-            // Log all devices found during scan for debugging
+            
             val foundDevices = mutableSetOf<String>()
             val peripheral =
                 centralManager
@@ -108,10 +75,7 @@ class BleOtaTransport(private val centralManager: CentralManager, private val ad
         return null
     }
 
-    /**
-     * Calculate the potential OTA MAC address by incrementing the last byte. Some ESP32 bootloaders use MAC+1 for OTA
-     * mode to distinguish from normal operation.
-     */
+    
     @Suppress("MagicNumber", "ReturnCount")
     private fun calculateOtaAddress(macAddress: String): String {
         val parts = macAddress.split(":")
@@ -122,7 +86,7 @@ class BleOtaTransport(private val centralManager: CentralManager, private val ad
         return parts.take(5).joinToString(":") + ":" + incrementedByte
     }
 
-    /** Connect to the device and discover OTA service. */
+    
     @OptIn(ExperimentalUuidApi::class)
     @Suppress("LongMethod")
     override suspend fun connect(): Result<Unit> = runCatching {
@@ -131,7 +95,7 @@ class BleOtaTransport(private val centralManager: CentralManager, private val ad
 
         Logger.i { "BLE OTA: Connecting to $address using Nordic BLE Library..." }
 
-        // Scan for device by address - device must have rebooted into OTA mode
+        
         val p =
             scanForOtaDevice()
                 ?: throw OtaProtocolException.ConnectionFailed(
@@ -147,7 +111,7 @@ class BleOtaTransport(private val centralManager: CentralManager, private val ad
         )
         p.requestConnectionPriority(ConnectionPriority.HIGH)
 
-        // Monitor connection state
+        
         p.state
             .onEach { state ->
                 Logger.d { "BLE OTA: Connection state changed to $state" }
@@ -157,8 +121,7 @@ class BleOtaTransport(private val centralManager: CentralManager, private val ad
             }
             .launchIn(transportScope)
 
-        // Wait for connection or failure with timeout
-        // Don't use drop(1) - we might already be connected by the time we start collecting
+        
         val connectionState =
             try {
                 withTimeout(CONNECTION_TIMEOUT_MS) {
@@ -176,7 +139,7 @@ class BleOtaTransport(private val centralManager: CentralManager, private val ad
 
         Logger.i { "BLE OTA: Connected to ${p.address}, discovering services..." }
 
-        // Discover services
+        
         val services = p.services(listOf(SERVICE_UUID.toKotlinUuid())).filterNotNull().first()
         val meshtasticOtaService =
             services.find { it.uuid == SERVICE_UUID.toKotlinUuid() }
@@ -190,7 +153,7 @@ class BleOtaTransport(private val centralManager: CentralManager, private val ad
             throw OtaProtocolException.ConnectionFailed("Required characteristics not found")
         }
 
-        // Enable notifications and collect responses
+        
         txChar
             .subscribe()
             .onEach { notifyBytes ->
@@ -257,19 +220,19 @@ class BleOtaTransport(private val centralManager: CentralManager, private val ad
             val currentChunkSize = minOf(chunkSize, remainingBytes)
             val chunk = data.copyOfRange(sentBytes, sentBytes + currentChunkSize)
 
-            // Write chunk
+            
             writeData(chunk, WriteType.WITHOUT_RESPONSE)
 
-            // Wait for response (ACK or OK for last chunk)
+            
             val response = waitForResponse(ACK_TIMEOUT_MS)
             val nextSentBytes = sentBytes + currentChunkSize
             when (val parsed = OtaResponse.parse(response)) {
                 is OtaResponse.Ack -> {
-                    // Normal chunk success
+                    
                 }
 
                 is OtaResponse.Ok -> {
-                    // OK indicates completion (usually on last chunk)
+                    
                     if (nextSentBytes >= totalBytes) {
                         sentBytes = nextSentBytes
                         onProgress(1.0f)
@@ -293,7 +256,7 @@ class BleOtaTransport(private val centralManager: CentralManager, private val ad
             onProgress(sentBytes.toFloat() / totalBytes)
         }
 
-        // If we finished the loop without receiving OK, wait for it now
+        
         val finalResponse = waitForResponse(VERIFICATION_TIMEOUT_MS)
         when (val parsed = OtaResponse.parse(finalResponse)) {
             is OtaResponse.Ok -> Unit
@@ -338,26 +301,24 @@ class BleOtaTransport(private val centralManager: CentralManager, private val ad
     }
 
     companion object {
-        // Service and Characteristic UUIDs from ESP32 Unified OTA spec
+        
         private val SERVICE_UUID = UUID.fromString("4FAFC201-1FB5-459E-8FCC-C5C9C331914B")
         private val OTA_CHARACTERISTIC_UUID = UUID.fromString("62ec0272-3ec5-11eb-b378-0242ac130005")
         private val TX_CHARACTERISTIC_UUID = UUID.fromString("62ec0272-3ec5-11eb-b378-0242ac130003")
 
-        // Timeouts and retries
+        
         private val SCAN_TIMEOUT = 10.seconds
         private const val CONNECTION_TIMEOUT_MS = 15_000L
-        private const val ERASING_TIMEOUT_MS = 60_000L // Flash erase can take a while
+        private const val ERASING_TIMEOUT_MS = 60_000L 
         private const val ACK_TIMEOUT_MS = 10_000L
         private const val VERIFICATION_TIMEOUT_MS = 10_000L
 
-        // Reboot and scan retry configuration
-        // Device needs time to reboot into OTA mode after receiving the reboot command
+        
         private const val REBOOT_DELAY_MS = 5_000L
         private const val SCAN_RETRY_COUNT = 3
         private const val SCAN_RETRY_DELAY_MS = 2_000L
 
-        // Recommended chunk size for BLE
+        
         const val RECOMMENDED_CHUNK_SIZE = 512
     }
 }
-

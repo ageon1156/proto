@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package org.meshtastic.feature.firmware.ota
 
 import org.junit.Assert.assertEquals
@@ -64,7 +48,7 @@ class UnifiedOtaProtocolTest {
 
     @Test
     fun `OtaResponse parse handles detailed OK with partial data`() {
-        // Test with fewer than expected parts (should fallback to basic OK)
+        
         val response = OtaResponse.parse("OK 1.0 2.3.4\n")
         assertEquals(OtaResponse.Ok(), response)
     }
@@ -87,4 +71,3 @@ class UnifiedOtaProtocolTest {
         assertEquals("Unknown response: RANDOM_GARBAGE", (response as OtaResponse.Error).message)
     }
 }
-

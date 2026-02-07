@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package org.meshtastic.feature.settings.radio
 
 import android.Manifest
@@ -86,7 +70,7 @@ import org.meshtastic.proto.moduleConfig
 import java.io.FileOutputStream
 import javax.inject.Inject
 
-/** Data class that represents the current RadioConfig state. */
+
 data class RadioConfigState(
     val isLocal: Boolean = false,
     val connected: Boolean = false,
@@ -224,7 +208,7 @@ constructor(
                             state.copy(responseState = currentState.copy(total = total))
                         } else {
                             state.copy(
-                                route = "", // setter (response is PortNum.ROUTING_APP)
+                                route = "", 
                                 responseState = ResponseState.Loading(),
                             )
                         }
@@ -237,8 +221,8 @@ constructor(
 
     fun setOwner(user: MeshProtos.User) {
         val targetNode = destNode.value ?: return
-        // Ensure we are setting the owner for the intended target node
-        // This prevents accidentally updating the local node if the user object has the wrong ID
+        
+        
         val fixedUser =
             if (targetNode.user.id.isNotEmpty() && targetNode.user.id != user.id) {
                 Logger.w { "Fixing user ID mismatch in setOwner: form=${user.id} target=${targetNode.user.id}" }
@@ -380,7 +364,7 @@ constructor(
         )
         if (destNum == myNodeNum) {
             viewModelScope.launch {
-                // Clear the service's in-memory node cache first so screens refresh immediately.
+                
                 val existingNodeNums = nodeRepository.getNodeDBbyNum().firstOrNull()?.keys?.toList().orEmpty()
                 meshService?.let { service ->
                     existingNodeNums.forEach { service.removeByNodenum(service.packetId, it) }
@@ -398,7 +382,7 @@ constructor(
         )
         if (destNum == myNodeNum) {
             viewModelScope.launch {
-                // Clear the service's in-memory node cache as well so UI updates immediately.
+                
                 val existingNodeNums = nodeRepository.getNodeDBbyNum().firstOrNull()?.keys?.toList().orEmpty()
                 meshService?.let { service ->
                     existingNodeNums.forEach { service.removeByNodenum(service.packetId, it) }
@@ -410,7 +394,7 @@ constructor(
 
     private fun sendAdminRequest(destNum: Int) {
         val route = radioConfigState.value.route
-        _radioConfigState.update { it.copy(route = "") } // setter (response is PortNum.ROUTING_APP)
+        _radioConfigState.update { it.copy(route = "") } 
 
         val preserveFavorites = radioConfigState.value.nodeDbResetPreserveFavorites
 
@@ -481,11 +465,11 @@ constructor(
                 val publicKeyBytes = securityConfig.publicKey.toByteArray()
                 val privateKeyBytes = securityConfig.privateKey.toByteArray()
 
-                // Convert byte arrays to Base64 strings for human readability in JSON
+                
                 val publicKeyBase64 = Base64.encodeToString(publicKeyBytes, Base64.NO_WRAP)
                 val privateKeyBase64 = Base64.encodeToString(privateKeyBytes, Base64.NO_WRAP)
 
-                // Create a JSON object
+                
                 val jsonObject =
                     JSONObject().apply {
                         put("timestamp", System.currentTimeMillis())
@@ -493,7 +477,7 @@ constructor(
                         put("private_key", privateKeyBase64)
                     }
 
-                // Convert JSON object to a string
+                
                 val jsonString = jsonObject.toString(indentSpaces)
 
                 app.contentResolver.openFileDescriptor(uri, "wt")?.use { parcelFileDescriptor ->
@@ -597,7 +581,7 @@ constructor(
             ConfigRoute.CHANNELS -> {
                 getChannel(destNum, 0)
                 getConfig(destNum, ConfigRoute.LORA.type)
-                // channel editor is synchronous, so we don't use requestIds as total
+                
                 setResponseStateTotal(maxChannels + 1)
             }
 
@@ -640,7 +624,7 @@ constructor(
             if (currentState is ResponseState.Loading) {
                 state.copy(responseState = currentState.copy(total = newTotal))
             } else {
-                state // Return the unchanged state for other response states
+                state 
             }
         }
     }
@@ -650,7 +634,7 @@ constructor(
             if (state.responseState is ResponseState.Loading) {
                 state.copy(responseState = ResponseState.Success(true))
             } else {
-                state // Return the unchanged state for other response states
+                state 
             }
         }
     }
@@ -675,7 +659,7 @@ constructor(
                     state.responseState.copy(completed = increment, status = status ?: state.responseState.status),
                 )
             } else {
-                state // Return the unchanged state for other response states
+                state 
             }
         }
     }
@@ -717,7 +701,7 @@ constructor(
 
                 AdminProtos.AdminMessage.PayloadVariantCase.GET_CHANNEL_RESPONSE -> {
                     val response = parsed.getChannelResponse
-                    // Stop once we get to the first disabled entry
+                    
                     if (response.role != ChannelProtos.Channel.Role.DISABLED) {
                         _radioConfigState.update { state ->
                             state.copy(
@@ -729,11 +713,11 @@ constructor(
                             getString(Res.string.fetching_channel_indexed, response.index + 1, maxChannels),
                         )
                         if (response.index + 1 < maxChannels && route == ConfigRoute.CHANNELS.name) {
-                            // Not done yet, request next channel
+                            
                             getChannel(destNum, response.index + 1)
                         }
                     } else {
-                        // Received last channel, update total and start channel editor
+                        
                         setResponseStateTotal(response.index + 1)
                     }
                 }
@@ -745,7 +729,7 @@ constructor(
 
                 AdminProtos.AdminMessage.PayloadVariantCase.GET_CONFIG_RESPONSE -> {
                     val response = parsed.getConfigResponse
-                    if (response.payloadVariantCase.number == 0) { // PAYLOADVARIANT_NOT_SET
+                    if (response.payloadVariantCase.number == 0) { 
                         sendError(response.payloadVariantCase.name)
                     }
                     _radioConfigState.update { it.copy(radioConfig = response) }
@@ -754,7 +738,7 @@ constructor(
 
                 AdminProtos.AdminMessage.PayloadVariantCase.GET_MODULE_CONFIG_RESPONSE -> {
                     val response = parsed.getModuleConfigResponse
-                    if (response.payloadVariantCase.number == 0) { // PAYLOADVARIANT_NOT_SET
+                    if (response.payloadVariantCase.number == 0) { 
                         sendError(response.payloadVariantCase.name)
                     }
                     _radioConfigState.update { it.copy(moduleConfig = response) }
@@ -790,4 +774,3 @@ constructor(
         }
     }
 }
-

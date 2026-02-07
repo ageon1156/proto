@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package org.meshtastic.feature.node.metrics
 
 import android.text.format.DateUtils
@@ -183,7 +167,7 @@ fun TracerouteLogScreen(
                                 append("\n\n$durationText")
                             }
                         } else {
-                            // For cases where there's a result but no full route, display plain text
+                            
                             res.fromRadio.packet
                                 .getTracerouteResponse(
                                     ::getUsername,
@@ -323,14 +307,14 @@ private fun TracerouteItem(icon: ImageVector, text: String, modifier: Modifier =
     }
 }
 
-/** Generates a display string and icon based on the route discovery information. */
+
 @Composable
 private fun MeshProtos.RouteDiscovery?.getTextAndIcon(): Pair<String, ImageVector> = when {
     this == null -> {
         stringResource(Res.string.routing_error_no_response) to Icons.Default.PersonOff
     }
-    // A direct route means the sender and receiver are the only two nodes in the route.
-    routeCount <= 2 && routeBackCount <= 2 -> { // also check routeBackCount for direct to be more robust
+    
+    routeCount <= 2 && routeBackCount <= 2 -> { 
         stringResource(Res.string.traceroute_direct) to Icons.Default.Group
     }
 
@@ -340,26 +324,21 @@ private fun MeshProtos.RouteDiscovery?.getTextAndIcon(): Pair<String, ImageVecto
     }
 
     else -> {
-        // Asymmetric route
+        
         val towards = maxOf(0, routeCount - 2)
         val back = maxOf(0, routeBackCount - 2)
         stringResource(Res.string.traceroute_diff, towards, back) to Icons.Default.Groups
     }
 }
 
-/**
- * Converts a raw traceroute string into an [AnnotatedString] with SNR values highlighted according to their quality.
- *
- * @param inString The raw string output from a traceroute response.
- * @return An [AnnotatedString] with SNR values styled, or an empty [AnnotatedString] if input is null.
- */
+
 @Composable
 fun annotateTraceroute(inString: String?): AnnotatedString {
     if (inString == null) return buildAnnotatedString { append("") }
     return buildAnnotatedString {
         inString.lines().forEachIndexed { i, line ->
             if (i > 0) append("\n")
-            // Example line: "⇊ -8.75 dB SNR"
+            
             if (line.trimStart().startsWith("⇊")) {
                 val snrRegex = Regex("""⇊ ([\d\.\?-]+) dB""")
                 val snrMatch = snrRegex.find(line)
@@ -396,4 +375,3 @@ private fun TracerouteItemPreview() {
         )
     AppTheme { TracerouteItem(icon = Icons.Default.Group, text = "$time - Direct") }
 }
-

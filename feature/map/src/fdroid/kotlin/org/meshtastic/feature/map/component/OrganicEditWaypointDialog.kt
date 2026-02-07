@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package org.meshtastic.feature.map.component
 
 import android.app.DatePickerDialog
@@ -85,10 +69,7 @@ import org.meshtastic.proto.MeshProtos.Waypoint
 import org.meshtastic.proto.copy
 import java.util.Calendar
 
-/**
- * Organic styled waypoint editing dialog with natural shapes and colors.
- * Features LeafShape container, organic toggle rows, and earthy color palette.
- */
+
 @Suppress("LongMethod")
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -188,7 +169,7 @@ fun OrganicEditWaypointDialog(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Organic toggle row for locked
+                    
                     OrganicToggleRow(
                         icon = Icons.Default.Lock,
                         label = stringResource(Res.string.locked),
@@ -221,7 +202,7 @@ fun OrganicEditWaypointDialog(
                         hour, minute, is24Hour,
                     )
 
-                    // Organic toggle row for expires
+                    
                     OrganicToggleRow(
                         icon = Icons.Default.CalendarMonth,
                         label = stringResource(Res.string.expires),
@@ -315,9 +296,7 @@ fun OrganicEditWaypointDialog(
     }
 }
 
-/**
- * Organic styled toggle row with icon and switch.
- */
+
 @Composable
 private fun OrganicToggleRow(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
@@ -357,9 +336,7 @@ private fun OrganicToggleRow(
     }
 }
 
-/**
- * Organic styled date/time picker button.
- */
+
 @Composable
 private fun OrganicDateTimeButton(
     label: String,
@@ -388,4 +365,3 @@ private fun OrganicDateTimeButton(
         }
     }
 }
-

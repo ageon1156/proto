@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package org.meshtastic.feature.map
 
 import android.app.Application
@@ -179,7 +163,7 @@ constructor(
                 _selectedCustomTileProviderUrl.value != null &&
                 originalConfig?.urlTemplate == _selectedCustomTileProviderUrl.value
             ) {
-                // No change needed if URL didn't change, or handle if it did
+                
             } else if (originalConfig != null && _selectedCustomTileProviderUrl.value != originalConfig.urlTemplate) {
                 val currentlySelectedConfig =
                     customTileProviderConfigs.value.find { it.urlTemplate == _selectedCustomTileProviderUrl.value }
@@ -197,7 +181,7 @@ constructor(
 
             if (configToRemove != null && _selectedCustomTileProviderUrl.value == configToRemove.urlTemplate) {
                 _selectedCustomTileProviderUrl.value = null
-                // Also clear from prefs
+                
                 googleMapsPrefs.selectedCustomTileUrl = null
             }
         }
@@ -212,7 +196,7 @@ constructor(
                 return
             }
             _selectedCustomTileProviderUrl.value = config.urlTemplate
-            _selectedGoogleMapType.value = MapType.NORMAL // Reset to a default or keep last? For now, reset.
+            _selectedGoogleMapType.value = MapType.NORMAL 
             googleMapsPrefs.selectedCustomTileUrl = config.urlTemplate
             googleMapsPrefs.selectedGoogleMapType = null
         } else {
@@ -223,7 +207,7 @@ constructor(
 
     fun setSelectedGoogleMapType(mapType: MapType) {
         _selectedGoogleMapType.value = mapType
-        _selectedCustomTileProviderUrl.value = null // Clear custom selection
+        _selectedCustomTileProviderUrl.value = null 
         googleMapsPrefs.selectedGoogleMapType = mapType.name
         googleMapsPrefs.selectedCustomTileUrl = null
     }
@@ -290,17 +274,17 @@ constructor(
     private fun loadPersistedMapType() {
         val savedCustomUrl = googleMapsPrefs.selectedCustomTileUrl
         if (savedCustomUrl != null) {
-            // Check if this custom provider still exists
+            
             if (
                 customTileProviderConfigs.value.any { it.urlTemplate == savedCustomUrl } &&
                 isValidTileUrlTemplate(savedCustomUrl)
             ) {
                 _selectedCustomTileProviderUrl.value = savedCustomUrl
-                _selectedGoogleMapType.value = MapType.NORMAL // Default, as custom is active
+                _selectedGoogleMapType.value = MapType.NORMAL 
             } else {
-                // The saved custom URL is no longer valid or doesn't exist, remove preference
+                
                 googleMapsPrefs.selectedCustomTileUrl = null
-                // Fallback to default Google Map type
+                
                 _selectedGoogleMapType.value = MapType.NORMAL
             }
         } else {
@@ -309,7 +293,7 @@ constructor(
                 _selectedGoogleMapType.value = MapType.valueOf(savedGoogleMapTypeName ?: MapType.NORMAL.name)
             } catch (e: IllegalArgumentException) {
                 Logger.e(e) { "Invalid saved Google Map type: $savedGoogleMapTypeName" }
-                _selectedGoogleMapType.value = MapType.NORMAL // Fallback in case of invalid stored name
+                _selectedGoogleMapType.value = MapType.NORMAL 
                 googleMapsPrefs.selectedGoogleMapType = null
             }
         }
@@ -558,4 +542,3 @@ data class MapLayerItem(
     var geoJsonLayerData: GeoJsonLayer? = null,
     val layerType: LayerType,
 )
-

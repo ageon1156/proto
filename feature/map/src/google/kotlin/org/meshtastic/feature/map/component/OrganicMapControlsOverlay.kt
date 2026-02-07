@@ -1,20 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package org.meshtastic.feature.map.component
 
 import androidx.compose.animation.core.animateFloatAsState
@@ -52,10 +35,7 @@ import org.meshtastic.core.ui.theme.StatusColors.StatusRed
 import org.meshtastic.core.ui.theme.organicSpring
 import org.meshtastic.feature.map.MapViewModel
 
-/**
- * Organic styled map controls overlay with flowing design and natural animations.
- * Features a river-shaped container with soft shadows and organic button spacing.
- */
+
 @Composable
 fun OrganicMapControlsOverlay(
     modifier: Modifier = Modifier,
@@ -76,7 +56,7 @@ fun OrganicMapControlsOverlay(
     onCompassClick: () -> Unit = {},
     followPhoneBearing: Boolean,
 ) {
-    // Organic container with flowing shape
+    
     Box(
         modifier = modifier
             .shadow(
@@ -93,7 +73,7 @@ fun OrganicMapControlsOverlay(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Compass button with organic styling
+            
             OrganicCompassButton(
                 onClick = onCompassClick,
                 bearing = bearing,
@@ -146,7 +126,7 @@ fun OrganicMapControlsOverlay(
                 onClick = onManageLayersClicked,
             )
 
-            // Location tracking button with organic styling
+            
             if (hasLocationPermission) {
                 OrganicMapButton(
                     icon = if (isLocationTrackingEnabled) {
@@ -167,9 +147,7 @@ fun OrganicMapControlsOverlay(
     }
 }
 
-/**
- * Organic styled compass button with rotation animation.
- */
+
 @Composable
 private fun OrganicCompassButton(
     onClick: () -> Unit,
@@ -178,7 +156,7 @@ private fun OrganicCompassButton(
 ) {
     val icon = if (isFollowing) Icons.Filled.Navigation else Icons.Outlined.Navigation
 
-    // Smooth rotation animation
+    
     val animatedBearing by animateFloatAsState(
         targetValue = -bearing,
         animationSpec = organicSpring(),
@@ -193,4 +171,3 @@ private fun OrganicCompassButton(
         onClick = onClick,
     )
 }
-

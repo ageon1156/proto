@@ -1,20 +1,3 @@
-/*
- * Copyright (c) 2025 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package org.meshtastic.feature.settings.radio.channel
 
 import androidx.compose.animation.AnimatedVisibility
@@ -273,17 +256,11 @@ private fun ChannelConfigScreen(
     }
 }
 
-/**
- * Determines what [Channel] if any is enabled to conduct automatic location sharing.
- *
- * @param firmwareVersion of the connected node.
- * @param settingsList Current list of channels on the node.
- * @return the index of the channel within `settingsList`.
- */
+
 private fun determineLocationSharingChannel(firmwareVersion: DeviceVersion, settingsList: List<ChannelSettings>): Int {
     var output = -1
     if (firmwareVersion >= DeviceVersion(asString = SECONDARY_CHANNEL_EPOCH)) {
-        /* Essentially the first index with the setting enabled */
+        
         for ((i, settings) in settingsList.withIndex()) {
             if (settings.moduleSettings.positionPrecision > 0) {
                 output = i
@@ -291,7 +268,7 @@ private fun determineLocationSharingChannel(firmwareVersion: DeviceVersion, sett
             }
         }
     } else {
-        /* Only the primary channel at index 0 can share locations automatically */
+        
         val primary = settingsList[0]
         if (primary.moduleSettings.positionPrecision > 0) {
             output = 0
@@ -320,4 +297,3 @@ private fun ChannelConfigScreenPreview() {
         onPositiveClicked = {},
     )
 }
-

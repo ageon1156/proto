@@ -1,20 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package org.meshtastic.feature.map.component
 
 import androidx.compose.animation.core.animateFloatAsState
@@ -70,10 +53,7 @@ import org.meshtastic.core.strings.show_layer
 import org.meshtastic.core.ui.theme.organicSpring
 import org.meshtastic.feature.map.MapLayerItem
 
-/**
- * Organic styled map layers bottom sheet with natural design.
- * Features flowing list items, organic buttons, and earthy color palette.
- */
+
 @Suppress("LongMethod")
 @Composable
 fun OrganicCustomMapLayersSheet(
@@ -86,7 +66,7 @@ fun OrganicCustomMapLayersSheet(
         contentPadding = PaddingValues(bottom = 24.dp, start = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Header
+        
         item {
             Column(modifier = Modifier.padding(vertical = 16.dp)) {
                 Row(
@@ -124,7 +104,7 @@ fun OrganicCustomMapLayersSheet(
             }
         }
 
-        // Empty state
+        
         if (mapLayers.isEmpty()) {
             item {
                 Box(
@@ -152,7 +132,7 @@ fun OrganicCustomMapLayersSheet(
                 }
             }
         } else {
-            // Layer items
+            
             items(mapLayers, key = { it.id }) { layer ->
                 OrganicLayerItem(
                     layer = layer,
@@ -162,7 +142,7 @@ fun OrganicCustomMapLayersSheet(
             }
         }
 
-        // Add layer button
+        
         item {
             Spacer(modifier = Modifier.height(8.dp))
             Button(
@@ -190,9 +170,7 @@ fun OrganicCustomMapLayersSheet(
     }
 }
 
-/**
- * Organic styled layer list item with visibility toggle and delete action.
- */
+
 @Composable
 private fun OrganicLayerItem(
     layer: MapLayerItem,
@@ -224,7 +202,7 @@ private fun OrganicLayerItem(
             .padding(horizontal = 12.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Layer indicator
+        
         Box(
             modifier = Modifier
                 .size(8.dp)
@@ -240,7 +218,7 @@ private fun OrganicLayerItem(
 
         Spacer(modifier = Modifier.width(12.dp))
 
-        // Layer name
+        
         Text(
             text = layer.name,
             style = MaterialTheme.typography.bodyMedium,
@@ -252,7 +230,7 @@ private fun OrganicLayerItem(
             modifier = Modifier.weight(1f)
         )
 
-        // Action buttons
+        
         Row {
             IconButton(
                 onClick = onToggleVisibility,
@@ -293,4 +271,3 @@ private fun OrganicLayerItem(
         }
     }
 }
-

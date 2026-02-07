@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package org.meshtastic.feature.firmware
 
 import android.content.Context
@@ -47,7 +31,7 @@ private const val PACKETS_BEFORE_PRN = 8
 private const val PERCENT_MAX = 100
 private const val PREPARE_DATA_DELAY = 400L
 
-/** Handles Over-the-Air (OTA) firmware updates for nRF52-based devices using the Nordic DFU library. */
+
 class NordicDfuHandler
 @Inject
 constructor(
@@ -59,7 +43,7 @@ constructor(
     override suspend fun startUpdate(
         release: FirmwareRelease,
         hardware: DeviceHardware,
-        target: String, // Bluetooth address
+        target: String, 
         updateState: (FirmwareUpdateState) -> Unit,
         firmwareUri: Uri?,
     ): File? =
@@ -112,7 +96,7 @@ constructor(
         val startingMsg = getString(Res.string.firmware_update_starting_service)
         updateState(FirmwareUpdateState.Processing(ProgressState(startingMsg)))
 
-        // n = Nordic (Legacy prefix handling in mesh service)
+        
         serviceRepository.meshService?.setDeviceAddress("n")
 
         DfuServiceInitiator(address)
@@ -131,7 +115,7 @@ constructor(
             .start(context, FirmwareDfuService::class.java)
     }
 
-    /** Observe DFU progress and events. */
+    
     fun progressFlow(): Flow<DfuInternalState> = callbackFlow {
         val listener =
             object : DfuProgressListenerAdapter() {
@@ -248,4 +232,3 @@ sealed interface DfuInternalState {
 
     data class Error(override val address: String, val message: String?) : DfuInternalState
 }
-

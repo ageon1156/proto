@@ -1,20 +1,3 @@
-/*
- * Copyright (c) 2025 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package org.meshtastic.feature.settings.radio.component
 
 import androidx.compose.foundation.text.KeyboardActions
@@ -167,7 +150,7 @@ fun CannedMessageConfigScreen(viewModel: RadioConfigViewModel = hiltViewModel(),
                 EditTextPreference(
                     title = stringResource(Res.string.allow_input_source),
                     value = formState.value.allowInputSource,
-                    maxSize = 63, // allow_input_source max_size:16
+                    maxSize = 63, 
                     enabled = state.connected,
                     isError = false,
                     keyboardOptions =
@@ -186,7 +169,7 @@ fun CannedMessageConfigScreen(viewModel: RadioConfigViewModel = hiltViewModel(),
                 EditTextPreference(
                     title = stringResource(Res.string.messages),
                     value = messagesInput,
-                    maxSize = 200, // messages max_size:201
+                    maxSize = 200, 
                     enabled = state.connected,
                     isError = false,
                     keyboardOptions =
@@ -198,4 +181,3 @@ fun CannedMessageConfigScreen(viewModel: RadioConfigViewModel = hiltViewModel(),
         }
     }
 }
-

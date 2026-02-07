@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package org.meshtastic.feature.firmware.ota
 
 import co.touchlab.kermit.Logger
@@ -31,16 +15,7 @@ import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.SocketTimeoutException
 
-/**
- * WiFi/TCP transport implementation for ESP32 Unified OTA protocol.
- *
- * Uses UDP for device discovery on port 3232, then establishes TCP connection for OTA commands and firmware streaming.
- *
- * Unlike BLE, WiFi transport:
- * - Uses synchronous TCP (no manual ACK waiting)
- * - Supports larger chunk sizes (up to 1024 bytes)
- * - Generally faster transfer speeds
- */
+
 class WifiOtaTransport(private val deviceIpAddress: String, private val port: Int = DEFAULT_PORT) : UnifiedOtaProtocol {
 
     private var socket: Socket? = null
@@ -48,7 +23,7 @@ class WifiOtaTransport(private val deviceIpAddress: String, private val port: In
     private var reader: BufferedReader? = null
     private var isConnected = false
 
-    /** Connect to the device via TCP. */
+    
     override suspend fun connect(): Result<Unit> = withContext(Dispatchers.IO) {
         runCatching {
             Logger.i { "WiFi OTA: Connecting to $deviceIpAddress:$port" }
@@ -126,22 +101,21 @@ class WifiOtaTransport(private val deviceIpAddress: String, private val port: In
                 val currentChunkSize = minOf(chunkSize, remainingBytes)
                 val chunk = data.copyOfRange(sentBytes, sentBytes + currentChunkSize)
 
-                // Write chunk directly to TCP stream
+                
                 outputStream.write(chunk)
                 outputStream.flush()
 
-                // In the updated protocol, the device may send ACKs over WiFi too.
-                // We check for any available responses without blocking too long.
+                
                 if (reader?.ready() == true) {
                     val response = readResponse(ACK_TIMEOUT_MS)
                     val nextSentBytes = sentBytes + currentChunkSize
                     when (val parsed = OtaResponse.parse(response)) {
                         is OtaResponse.Ack -> {
-                            // Normal chunk success
+                            
                         }
 
                         is OtaResponse.Ok -> {
-                            // OK indicates completion (usually on last chunk)
+                            
                             if (nextSentBytes >= totalBytes) {
                                 sentBytes = nextSentBytes
                                 onProgress(1.0f)
@@ -153,26 +127,26 @@ class WifiOtaTransport(private val deviceIpAddress: String, private val port: In
                             throw OtaProtocolException.TransferFailed("Transfer failed: ${parsed.message}")
                         }
 
-                        else -> {} // Ignore other responses during stream
+                        else -> {} 
                     }
                 }
 
                 sentBytes += currentChunkSize
                 onProgress(sentBytes.toFloat() / totalBytes)
 
-                // Small delay to avoid overwhelming the device
+                
                 delay(WRITE_DELAY_MS)
             }
 
             Logger.i { "WiFi OTA: Firmware streaming complete ($sentBytes bytes)" }
 
-            // Wait for final verification response (loop until OK or Error)
+            
             var finalHandshakeComplete = false
             while (!finalHandshakeComplete) {
                 val finalResponse = readResponse(VERIFICATION_TIMEOUT_MS)
                 when (val parsed = OtaResponse.parse(finalResponse)) {
                     is OtaResponse.Ok -> finalHandshakeComplete = true
-                    is OtaResponse.Ack -> {} // Ignore late ACKs
+                    is OtaResponse.Ack -> {} 
                     is OtaResponse.Error -> {
                         if (parsed.message.contains("Hash Mismatch", ignoreCase = true)) {
                             throw OtaProtocolException.VerificationFailed("Firmware hash mismatch after transfer")
@@ -224,25 +198,21 @@ class WifiOtaTransport(private val deviceIpAddress: String, private val port: In
 
     companion object {
         const val DEFAULT_PORT = 3232
-        const val RECOMMENDED_CHUNK_SIZE = 1024 // Larger than BLE
+        const val RECOMMENDED_CHUNK_SIZE = 1024 
         private const val RECEIVE_BUFFER_SIZE = 1024
         private const val DISCOVERY_TIMEOUT_DEFAULT = 3000L
         private const val BROADCAST_ADDRESS = "255.255.255.255"
 
-        // Timeouts
+        
         private const val CONNECTION_TIMEOUT_MS = 5_000
         private const val SOCKET_TIMEOUT_MS = 15_000
         private const val COMMAND_TIMEOUT_MS = 10_000L
         private const val ERASING_TIMEOUT_MS = 60_000L
         private const val ACK_TIMEOUT_MS = 10_000L
         private const val VERIFICATION_TIMEOUT_MS = 10_000L
-        private const val WRITE_DELAY_MS = 10L // Shorter than BLE
+        private const val WRITE_DELAY_MS = 10L 
 
-        /**
-         * Discover ESP32 devices on the local network via UDP broadcast.
-         *
-         * @return List of discovered device IP addresses
-         */
+        
         suspend fun discoverDevices(timeoutMs: Long = DISCOVERY_TIMEOUT_DEFAULT): List<String> =
             withContext(Dispatchers.IO) {
                 val devices = mutableListOf<String>()
@@ -252,7 +222,7 @@ class WifiOtaTransport(private val deviceIpAddress: String, private val port: In
                         socket.broadcast = true
                         socket.soTimeout = timeoutMs.toInt()
 
-                        // Send discovery broadcast
+                        
                         val discoveryMessage = "MESHTASTIC_OTA_DISCOVERY\n".toByteArray()
                         val broadcastAddress = InetAddress.getByName(BROADCAST_ADDRESS)
                         val packet =
@@ -260,7 +230,7 @@ class WifiOtaTransport(private val deviceIpAddress: String, private val port: In
                         socket.send(packet)
                         Logger.d { "WiFi OTA: Sent discovery broadcast" }
 
-                        // Listen for responses
+                        
                         val receiveBuffer = ByteArray(RECEIVE_BUFFER_SIZE)
                         val startTime = System.currentTimeMillis()
 
@@ -289,4 +259,3 @@ class WifiOtaTransport(private val deviceIpAddress: String, private val port: In
             }
     }
 }
-
