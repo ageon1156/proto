@@ -1,5 +1,3 @@
-
-
 package org.meshtastic.feature.intro
 
 import androidx.compose.foundation.layout.Arrangement
@@ -53,4 +51,3 @@ fun AnalyticsIntro(modifier: Modifier = Modifier) {
 private fun AnalyticsIntroPreview() {
     AnalyticsIntro()
 }
-

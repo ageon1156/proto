@@ -1,20 +1,3 @@
-/*
- * Copyright (c) 2025 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package org.meshtastic.feature.settings.navigation
 
 import androidx.compose.material.icons.Icons
@@ -34,16 +17,7 @@ import org.meshtastic.core.strings.store_forward
 import org.meshtastic.proto.AdminProtos
 import org.meshtastic.proto.MeshProtos.DeviceMetadata
 
-/**
- * Module configuration routes for Meshtastic radio modules.
- *
- * Removed for emergency app streamlining:
- * - MQTT, Range Test, Telemetry, Audio, Remote Hardware
- * - Neighbor Info, Ambient Lighting, Detection Sensor, Paxcounter
- *
- * Kept for core functionality:
- * - SERIAL, EXT_NOTIFICATION, STORE_FORWARD, CANNED_MESSAGE
- */
+
 enum class ModuleRoute(val title: StringResource, val route: Route, val icon: ImageVector?, val type: Int = 0) {
     SERIAL(
         Res.string.serial,
@@ -77,10 +51,9 @@ enum class ModuleRoute(val title: StringResource, val route: Route, val icon: Im
     companion object {
         fun filterExcludedFrom(metadata: DeviceMetadata?): List<ModuleRoute> = entries.filter {
             when (metadata) {
-                null -> true // Include all routes if metadata is null
+                null -> true 
                 else -> metadata.excludedModules and it.bitfield == 0
             }
         }
     }
 }
-

@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package org.meshtastic.feature.map.component
 
 import android.app.DatePickerDialog
@@ -91,14 +75,14 @@ fun EditWaypointDialog(
 ) {
     var waypointInput by remember { mutableStateOf(waypoint) }
     val title = if (waypoint.id == 0) Res.string.waypoint_new else Res.string.waypoint_edit
-    val defaultEmoji = 0x1F4CD // 📍 Round Pushpin
+    val defaultEmoji = 0x1F4CD 
     val currentEmojiCodepoint = if (waypointInput.icon == 0) defaultEmoji else waypointInput.icon
     var showEmojiPickerView by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val calendar = remember { Calendar.getInstance() }
 
-    // Initialize date and time states from waypointInput.expire
+    
     var selectedDateString by remember { mutableStateOf("") }
     var selectedTimeString by remember { mutableStateOf("") }
     var isExpiryEnabled by remember {
@@ -116,7 +100,7 @@ fun EditWaypointDialog(
                 calendar.timeInMillis = waypointInput.expire * 1000L
                 selectedDateString = dateFormat.format(calendar.time)
                 selectedTimeString = timeFormat.format(calendar.time)
-            } else { // If enabled but not set, default to 8 hours from now
+            } else { 
                 calendar.timeInMillis = System.currentTimeMillis()
                 calendar.add(Calendar.HOUR_OF_DAY, 8)
                 waypointInput = waypointInput.copy { expire = (calendar.timeInMillis / 1000).toInt() }
@@ -167,7 +151,7 @@ fun EditWaypointDialog(
                         label = { Text(stringResource(Res.string.description)) },
                         keyboardOptions =
                         KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
-                        keyboardActions = KeyboardActions(onDone = { /* Handle next/done focus */ }),
+                        keyboardActions = KeyboardActions(onDone = {  }),
                         modifier = Modifier.fillMaxWidth(),
                         minLines = 2,
                         maxLines = 3,
@@ -210,7 +194,7 @@ fun EditWaypointDialog(
                             onCheckedChange = { checked ->
                                 isExpiryEnabled = checked
                                 if (checked) {
-                                    // Default to 8 hours from now if not already set
+                                    
                                     if (waypointInput.expire == 0 || waypointInput.expire == Int.MAX_VALUE) {
                                         val cal = Calendar.getInstance()
                                         cal.timeInMillis = System.currentTimeMillis()
@@ -218,7 +202,7 @@ fun EditWaypointDialog(
                                         waypointInput =
                                             waypointInput.copy { expire = (cal.timeInMillis / 1000).toInt() }
                                     }
-                                    // LaunchedEffect will update date/time strings
+                                    
                                 } else {
                                     waypointInput = waypointInput.copy { expire = Int.MAX_VALUE }
                                 }
@@ -233,7 +217,7 @@ fun EditWaypointDialog(
                                     timeInMillis = waypointInput.expire * 1000L
                                 } else {
                                     timeInMillis = System.currentTimeMillis()
-                                    add(Calendar.HOUR_OF_DAY, 8) // Default if re-enabling
+                                    add(Calendar.HOUR_OF_DAY, 8) 
                                 }
                             }
                         val year = currentCalendar.get(Calendar.YEAR)
@@ -260,7 +244,7 @@ fun EditWaypointDialog(
                             TimePickerDialog(
                                 context,
                                 { _: TimePicker, selectedHour: Int, selectedMinute: Int ->
-                                    // Keep the existing date part
+                                    
                                     val tempCal = Calendar.getInstance()
                                     tempCal.timeInMillis = waypointInput.expire * 1000L
                                     tempCal.set(Calendar.HOUR_OF_DAY, selectedHour)
@@ -311,7 +295,7 @@ fun EditWaypointDialog(
                             Text(stringResource(Res.string.delete), color = MaterialTheme.colorScheme.error)
                         }
                     }
-                    Spacer(modifier = Modifier.weight(1f)) // Pushes delete to left and cancel/send to right
+                    Spacer(modifier = Modifier.weight(1f)) 
                     TextButton(onClick = onDismissRequest, modifier = Modifier.padding(end = 8.dp)) {
                         Text(stringResource(Res.string.cancel))
                     }
@@ -320,7 +304,7 @@ fun EditWaypointDialog(
                     }
                 }
             },
-            dismissButton = null, // Using custom buttons in confirmButton Row
+            dismissButton = null, 
             modifier = modifier,
         )
     } else {
@@ -330,4 +314,3 @@ fun EditWaypointDialog(
         }
     }
 }
-

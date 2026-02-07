@@ -1,20 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package org.meshtastic.feature.map.component
 
 import androidx.compose.animation.core.animateFloatAsState
@@ -58,10 +41,7 @@ import org.meshtastic.core.ui.theme.LeafShape
 import org.meshtastic.core.ui.theme.organicSpring
 import org.meshtastic.feature.map.model.NodeClusterItem
 
-/**
- * Organic styled cluster items dialog with flowing design and natural animations.
- * Displays nodes at a shared location with gradient avatars and organic list items.
- */
+
 @Composable
 fun OrganicClusterItemsListDialog(
     items: List<NodeClusterItem>,
@@ -106,9 +86,7 @@ fun OrganicClusterItemsListDialog(
     )
 }
 
-/**
- * Organic styled list item for cluster dialog with gradient avatar.
- */
+
 @Composable
 private fun OrganicClusterDialogListItem(
     item: NodeClusterItem,
@@ -123,7 +101,7 @@ private fun OrganicClusterDialogListItem(
         label = "cluster_item_scale"
     )
 
-    // Generate gradient from node number using golden angle
+    
     val gradient = remember(item.node.num) {
         val hue = ((item.node.num * 137) % 360).toFloat()
         val color1 = android.graphics.Color.HSVToColor(floatArrayOf(hue, 0.5f, 0.7f))
@@ -146,7 +124,7 @@ private fun OrganicClusterDialogListItem(
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Gradient avatar
+        
         Box(
             modifier = Modifier
                 .size(40.dp)
@@ -164,7 +142,7 @@ private fun OrganicClusterDialogListItem(
 
         Spacer(modifier = Modifier.width(12.dp))
 
-        // Node info
+        
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = item.nodeTitle,
@@ -182,4 +160,3 @@ private fun OrganicClusterDialogListItem(
         }
     }
 }
-

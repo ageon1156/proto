@@ -1,20 +1,3 @@
-/*
- * Copyright (c) 2025 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package org.meshtastic.feature.map.component
 
 import androidx.compose.foundation.layout.Box
@@ -49,14 +32,14 @@ fun MapControlsOverlay(
     mapFilterMenuExpanded: Boolean,
     onMapFilterMenuDismissRequest: () -> Unit,
     onToggleMapFilterMenu: () -> Unit,
-    mapViewModel: MapViewModel, // For MapFilterDropdown and MapTypeDropdown
+    mapViewModel: MapViewModel, 
     mapTypeMenuExpanded: Boolean,
     onMapTypeMenuDismissRequest: () -> Unit,
     onToggleMapTypeMenu: () -> Unit,
     onManageLayersClicked: () -> Unit,
-    onManageCustomTileProvidersClicked: () -> Unit, // New parameter
+    onManageCustomTileProvidersClicked: () -> Unit, 
     isNodeMap: Boolean,
-    // Location tracking parameters
+    
     hasLocationPermission: Boolean = false,
     isLocationTrackingEnabled: Boolean = false,
     onToggleLocationTracking: () -> Unit = {},
@@ -106,8 +89,8 @@ fun MapControlsOverlay(
                 MapTypeDropdown(
                     expanded = mapTypeMenuExpanded,
                     onDismissRequest = onMapTypeMenuDismissRequest,
-                    mapViewModel = mapViewModel, // Pass mapViewModel
-                    onManageCustomTileProvidersClicked = onManageCustomTileProvidersClicked, // Pass new callback
+                    mapViewModel = mapViewModel, 
+                    onManageCustomTileProvidersClicked = onManageCustomTileProvidersClicked, 
                 )
             }
 
@@ -117,7 +100,7 @@ fun MapControlsOverlay(
                 onClick = onManageLayersClicked,
             )
 
-            // Location tracking button
+            
             if (hasLocationPermission) {
                 MapButton(
                     icon =
@@ -146,4 +129,3 @@ private fun CompassButton(onClick: () -> Unit, bearing: Float, isFollowing: Bool
         onClick = onClick,
     )
 }
-

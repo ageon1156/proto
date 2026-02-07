@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package org.meshtastic.feature.firmware.ota
 
 import android.content.Context
@@ -52,16 +36,13 @@ private const val PERCENT_MAX = 100
 private const val KIB_DIVISOR = 1024f
 private const val MILLIS_PER_SECOND = 1000f
 
-// Time to wait for OTA reboot packet to be sent before disconnecting mesh service
+
 private const val PACKET_SEND_DELAY_MS = 2000L
 
-// Time to wait for Android BLE GATT to fully release after disconnecting mesh service
+
 private const val GATT_RELEASE_DELAY_MS = 1000L
 
-/**
- * Handler for ESP32 firmware updates using the Unified OTA protocol. Supports both BLE and WiFi/TCP transports via
- * UnifiedOtaProtocol.
- */
+
 @Suppress("TooManyFunctions")
 class Esp32OtaUpdateHandler
 @Inject
@@ -72,7 +53,7 @@ constructor(
     @ApplicationContext private val context: Context,
 ) : FirmwareUpdateHandler {
 
-    /** Entry point for FirmwareUpdateHandler interface. Decides between BLE and WiFi based on target format. */
+    
     override suspend fun startUpdate(
         release: FirmwareRelease,
         hardware: DeviceHardware,
@@ -127,21 +108,20 @@ constructor(
         connectionAttempts: Int,
     ): File? = try {
         withContext(Dispatchers.IO) {
-            // Step 1: Get firmware file
+            
             val firmwareFile =
                 obtainFirmwareFile(release, hardware, firmwareUri, updateState) ?: return@withContext null
 
-            // Step 2: Calculate Hash and Trigger Reboot
+            
             val sha256Bytes = FirmwareHashUtil.calculateSha256Bytes(firmwareFile)
             val sha256Hash = FirmwareHashUtil.bytesToHex(sha256Bytes)
             Logger.i { "ESP32 OTA: Firmware hash: $sha256Hash" }
             triggerRebootOta(rebootMode, sha256Bytes)
 
-            // Step 3: Wait for packet to be sent, then disconnect mesh service
-            // The packet needs ~1-2 seconds to be written and acknowledged over BLE
+            
             delay(PACKET_SEND_DELAY_MS)
             disconnectMeshService()
-            // Give BLE stack time to fully release the GATT connection
+            
             delay(GATT_RELEASE_DELAY_MS)
 
             val transport = transportFactory()
@@ -210,10 +190,7 @@ constructor(
         }
     }
 
-    /**
-     * Disconnect the mesh service BLE connection to free up the GATT for OTA. Setting device address to "n" (NOP
-     * interface) cleanly disconnects without reconnection attempts.
-     */
+    
     private fun disconnectMeshService() {
         try {
             Logger.i { "ESP32 OTA: Disconnecting mesh service for OTA" }
@@ -251,7 +228,7 @@ constructor(
         attempts: Int,
         updateState: (FirmwareUpdateState) -> Unit,
     ): Boolean {
-        // Show "waiting for reboot" state before first connection attempt
+        
         val waitingMsg = getString(Res.string.firmware_update_waiting_reboot)
         updateState(FirmwareUpdateState.Processing(ProgressState(waitingMsg)))
 
@@ -277,7 +254,7 @@ constructor(
         rebootMode: Int,
         updateState: (FirmwareUpdateState) -> Unit,
     ) {
-        // Step 5: Start OTA
+        
         val startingOtaMsg = getString(Res.string.firmware_update_starting_ota)
         updateState(FirmwareUpdateState.Processing(ProgressState(startingOtaMsg)))
         transport
@@ -291,7 +268,7 @@ constructor(
             }
             .getOrThrow()
 
-        // Step 6: Stream
+        
         val uploadingMsg = getString(Res.string.firmware_update_uploading)
         updateState(FirmwareUpdateState.Updating(ProgressState(uploadingMsg, 0f)))
         val firmwareData = firmwareFile.readBytes()
@@ -341,4 +318,3 @@ constructor(
         updateState(FirmwareUpdateState.Success)
     }
 }
-

@@ -1,20 +1,3 @@
-/*
- * Copyright (c) 2025 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package org.meshtastic.feature.settings.radio
 
 import androidx.lifecycle.ViewModel
@@ -32,10 +15,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 private const val MIN_DAYS_THRESHOLD = 7f
 
-/**
- * ViewModel for [CleanNodeDatabaseScreen]. Manages the state and logic for cleaning the node database based on
- * specified criteria. The "older than X days" filter is always active.
- */
+
 @HiltViewModel
 class CleanNodeDatabaseViewModel
 @Inject
@@ -63,14 +43,7 @@ constructor(
         }
     }
 
-    /**
-     * Updates the list of nodes to be deleted based on the current filter criteria. The logic is as follows:
-     * - The "older than X days" filter (controlled by the slider) is always active.
-     * - If "only unknown nodes" is also enabled, nodes that are BOTH unknown AND older than X days are selected.
-     * - If "only unknown nodes" is not enabled, all nodes older than X days are selected.
-     * - Nodes with an associated public key (PKI) heard from within the last 7 days are always excluded from deletion.
-     * - Nodes marked as ignored or favorite are always excluded from deletion.
-     */
+    
     fun getNodesToDelete() {
         viewModelScope.launch {
             val onlyUnknownEnabled = _onlyUnknownNodes.value
@@ -80,30 +53,27 @@ constructor(
 
             val initialNodesToConsider =
                 if (onlyUnknownEnabled) {
-                    // Both "older than X days" and "only unknown nodes" filters apply
+                    
                     val olderNodes = nodeRepository.getNodesOlderThan(olderThanTimestamp.toInt())
                     val unknownNodes = nodeRepository.getUnknownNodes()
                     olderNodes.filter { itNode -> unknownNodes.any { unknownNode -> itNode.num == unknownNode.num } }
                 } else {
-                    // Only "older than X days" filter applies
+                    
                     nodeRepository.getNodesOlderThan(olderThanTimestamp.toInt())
                 }
 
             _nodesToDelete.value =
                 initialNodesToConsider.filterNot { node ->
-                    // Exclude nodes with PKI heard in the last 7 days
+                    
                     (node.hasPKC && node.lastHeard >= sevenDaysAgoSeconds) ||
-                        // Exclude ignored or favorite nodes
+                        
                         node.isIgnored ||
                         node.isFavorite
                 }
         }
     }
 
-    /**
-     * Deletes the nodes currently queued in [_nodesToDelete] from the database and instructs the mesh service to remove
-     * them.
-     */
+    
     fun cleanNodes() {
         viewModelScope.launch {
             val nodeNums = _nodesToDelete.value.map { it.num }
@@ -117,9 +87,8 @@ constructor(
                     }
                 }
             }
-            // Clear the list after deletion or if it was empty
+            
             _nodesToDelete.value = emptyList()
         }
     }
 }
-

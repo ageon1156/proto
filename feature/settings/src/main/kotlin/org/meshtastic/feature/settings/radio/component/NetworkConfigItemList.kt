@@ -1,20 +1,3 @@
-/*
- * Copyright (c) 2025 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package org.meshtastic.feature.settings.radio.component
 
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -136,7 +119,7 @@ fun NetworkConfigScreen(viewModel: RadioConfigViewModel = hiltViewModel(), onBac
             viewModel.setConfig(config)
         },
     ) {
-        // Display device connection status
+        
         state.deviceConnectionStatus?.let { connectionStatus ->
             if (
                 connectionStatus.wifi?.status?.isConnected == true ||
@@ -181,7 +164,7 @@ fun NetworkConfigScreen(viewModel: RadioConfigViewModel = hiltViewModel(), onBac
                     EditTextPreference(
                         title = stringResource(Res.string.ssid),
                         value = formState.value.wifiSsid,
-                        maxSize = 32, // wifi_ssid max_size:33
+                        maxSize = 32, 
                         enabled = state.connected,
                         isError = false,
                         keyboardOptions =
@@ -193,7 +176,7 @@ fun NetworkConfigScreen(viewModel: RadioConfigViewModel = hiltViewModel(), onBac
                     EditPasswordPreference(
                         title = stringResource(Res.string.password),
                         value = formState.value.wifiPsk,
-                        maxSize = 64, // wifi_psk max_size:65
+                        maxSize = 64, 
                         enabled = state.connected,
                         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                         onValueChanged = { formState.value = formState.value.copy { wifiPsk = it } },
@@ -247,7 +230,7 @@ fun NetworkConfigScreen(viewModel: RadioConfigViewModel = hiltViewModel(), onBac
                 EditTextPreference(
                     title = stringResource(Res.string.ntp_server),
                     value = formState.value.ntpServer,
-                    maxSize = 32, // ntp_server max_size:33
+                    maxSize = 32, 
                     enabled = state.connected,
                     isError = formState.value.ntpServer.isEmpty(),
                     keyboardOptions =
@@ -259,7 +242,7 @@ fun NetworkConfigScreen(viewModel: RadioConfigViewModel = hiltViewModel(), onBac
                 EditTextPreference(
                     title = stringResource(Res.string.rsyslog_server),
                     value = formState.value.rsyslogServer,
-                    maxSize = 32, // rsyslog_server max_size:33
+                    maxSize = 32, 
                     enabled = state.connected,
                     isError = false,
                     keyboardOptions =
@@ -336,4 +319,3 @@ private fun formatIpAddress(ipAddress: Int): String = "${(ipAddress) and 0xFF}."
     "${(ipAddress shr 8) and 0xFF}." +
     "${(ipAddress shr 16) and 0xFF}." +
     "${(ipAddress shr 24) and 0xFF}"
-

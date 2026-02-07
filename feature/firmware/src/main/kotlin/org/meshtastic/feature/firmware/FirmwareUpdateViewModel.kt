@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package org.meshtastic.feature.firmware
 
 import android.net.Uri
@@ -123,7 +107,7 @@ constructor(
     private var originalDeviceAddress: String? = null
 
     init {
-        // Cleanup potential leftovers
+        
         viewModelScope.launch {
             tempFirmwareFile = cleanupTemporaryFiles(fileHandler, tempFirmwareFile)
             checkForUpdates()
@@ -177,7 +161,7 @@ constructor(
                             val firmwareUpdateMethod =
                                 when {
                                     radioPrefs.isSerial() -> {
-                                        // ESP32 Serial updates are not supported from the app yet.
+                                        
                                         if (deviceHardware.isEsp32Arc) {
                                             FirmwareUpdateMethod.Unknown
                                         } else {
@@ -377,7 +361,7 @@ constructor(
                     _state.value = FirmwareUpdateState.Processing(ProgressState(msg))
                 }
 
-                else -> {} // ignore connected/disconnected for UI noise
+                else -> {} 
             }
         }
     }
@@ -386,11 +370,11 @@ constructor(
         val progress = dfuState.percent / PERCENT_MAX_VALUE
         val percentText = "${dfuState.percent}%"
 
-        // Nordic DFU speed is in Bytes/ms. Convert to KiB/s.
+        
         val speedBytesPerSec = dfuState.speed * MILLIS_PER_SECOND
         val speedKib = speedBytesPerSec / KIB_DIVISOR
 
-        // Calculate ETA
+        
         val totalBytes = tempFirmwareFile?.length() ?: 0L
         val etaText =
             if (totalBytes > 0 && speedBytesPerSec > 0 && dfuState.percent > 0) {
@@ -425,19 +409,19 @@ constructor(
     private suspend fun verifyUpdateResult(address: String?) {
         _state.value = FirmwareUpdateState.Verifying
 
-        // Trigger a fresh connection attempt by MeshService
+        
         address?.let { currentAddr ->
             Logger.i { "Post-update: Requesting MeshService to reconnect to $currentAddr" }
             serviceRepository.meshService?.setDeviceAddress("$DFU_RECONNECT_PREFIX$currentAddr")
         }
 
-        // Wait for device to reconnect and settle
+        
         val result =
             withTimeoutOrNull(VERIFY_TIMEOUT) {
-                // Wait for both Connected state and node info to be present
+                
                 serviceRepository.connectionState.first { it is ConnectionState.Connected }
                 nodeRepository.ourNodeInfo.filterNotNull().first()
-                delay(VERIFY_DELAY) // Extra buffer for initial config sync
+                delay(VERIFY_DELAY) 
                 true
             }
 
@@ -507,4 +491,3 @@ sealed class FirmwareUpdateMethod(val description: StringResource) {
 
     object Unknown : FirmwareUpdateMethod(Res.string.unknown)
 }
-

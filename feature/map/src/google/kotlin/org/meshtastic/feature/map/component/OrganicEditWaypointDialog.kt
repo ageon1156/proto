@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package org.meshtastic.feature.map.component
 
 import android.app.DatePickerDialog
@@ -85,10 +69,7 @@ import org.meshtastic.proto.copy
 import java.util.Calendar
 import java.util.TimeZone
 
-/**
- * Organic styled waypoint editing dialog with natural shapes and colors.
- * Features LeafShape container, organic text fields, and earthy color palette.
- */
+
 @Suppress("LongMethod", "CyclomaticComplexMethod", "MagicNumber")
 @Composable
 fun OrganicEditWaypointDialog(
@@ -100,7 +81,7 @@ fun OrganicEditWaypointDialog(
 ) {
     var waypointInput by remember { mutableStateOf(waypoint) }
     val title = if (waypoint.id == 0) Res.string.waypoint_new else Res.string.waypoint_edit
-    val defaultEmoji = 0x1F4CD // 📍 Round Pushpin
+    val defaultEmoji = 0x1F4CD 
     val currentEmojiCodepoint = if (waypointInput.icon == 0) defaultEmoji else waypointInput.icon
     var showEmojiPickerView by remember { mutableStateOf(false) }
 
@@ -135,7 +116,7 @@ fun OrganicEditWaypointDialog(
         }
     }
 
-    // Organic text field colors
+    
     val textFieldColors = OutlinedTextFieldDefaults.colors(
         focusedBorderColor = MaterialTheme.colorScheme.primary,
         unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
@@ -159,7 +140,7 @@ fun OrganicEditWaypointDialog(
             },
             text = {
                 Column(modifier = modifier.fillMaxWidth()) {
-                    // Name field with emoji picker
+                    
                     OutlinedTextField(
                         value = waypointInput.name,
                         onValueChange = { waypointInput = waypointInput.copy { name = it.take(29) } },
@@ -188,7 +169,7 @@ fun OrganicEditWaypointDialog(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Description field
+                    
                     OutlinedTextField(
                         value = waypointInput.description,
                         onValueChange = { waypointInput = waypointInput.copy { description = it.take(99) } },
@@ -207,7 +188,7 @@ fun OrganicEditWaypointDialog(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Locked toggle with organic styling
+                    
                     OrganicToggleRow(
                         icon = Icons.Default.Lock,
                         label = stringResource(Res.string.locked),
@@ -217,7 +198,7 @@ fun OrganicEditWaypointDialog(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Expiry toggle
+                    
                     OrganicToggleRow(
                         icon = Icons.Default.CalendarMonth,
                         label = stringResource(Res.string.expires),
@@ -237,7 +218,7 @@ fun OrganicEditWaypointDialog(
                         }
                     )
 
-                    // Date/Time pickers when expiry is enabled
+                    
                     if (isExpiryEnabled) {
                         val currentCalendar = Calendar.getInstance().apply {
                             if (waypointInput.expire != 0 && waypointInput.expire != Int.MAX_VALUE) {
@@ -278,7 +259,7 @@ fun OrganicEditWaypointDialog(
 
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        // Organic date/time buttons
+                        
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -345,9 +326,7 @@ fun OrganicEditWaypointDialog(
     }
 }
 
-/**
- * Organic styled toggle row with icon and switch.
- */
+
 @Composable
 private fun OrganicToggleRow(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
@@ -389,9 +368,7 @@ private fun OrganicToggleRow(
     }
 }
 
-/**
- * Organic styled date/time picker button.
- */
+
 @Composable
 private fun OrganicDateTimeButton(
     label: String,
@@ -419,4 +396,3 @@ private fun OrganicDateTimeButton(
         }
     }
 }
-

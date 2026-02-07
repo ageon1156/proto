@@ -1,20 +1,3 @@
-/*
- * Copyright (c) 2025 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package org.meshtastic.feature.intro
 
 import android.Manifest
@@ -34,12 +17,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.serialization.Serializable
 
-/**
- * Composable function for the main application introduction screen. This screen guides the user through initial setup
- * steps like granting permissions.
- *
- * @param onDone Callback invoked when the introduction flow is completed.
- */
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Suppress("LongMethod")
 @Composable
@@ -71,16 +49,15 @@ fun AppIntroductionScreen(onDone: () -> Unit) {
                 NotificationsScreen(
                     showNextButton = notificationsAlreadyGranted,
                     onSkip = {
-                        // Skip this screen and the Critical Alerts screen. Proceed to Location screen.
+                        
                         backStack.add(Location)
                     },
                     onConfigure = {
                         if (notificationsAlreadyGranted) {
                             backStack.add(CriticalAlerts)
                         } else {
-                            // For Android Tiramisu (API 33) and above, this requests POST_NOTIFICATIONS
-                            // For lower versions, notificationPermissionState will be null, and this branch isn't
-                            // taken.
+                            
+                            
                             notificationPermissionState?.launchPermissionRequest()
                         }
                     },
@@ -91,9 +68,8 @@ fun AppIntroductionScreen(onDone: () -> Unit) {
                 CriticalAlertsScreen(
                     onSkip = { backStack.add(Location) },
                     onConfigure = {
-                        // Intent to open the specific notification channel settings for "my_alerts"
-                        // This allows the user to enable critical alerts if they were initially denied
-                        // or to adjust settings for notifications that can bypass Do Not Disturb.
+                        
+                        
                         val intent =
                             Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
                                 putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
@@ -109,10 +85,10 @@ fun AppIntroductionScreen(onDone: () -> Unit) {
                 val locationAlreadyGranted = locationPermissionState.allPermissionsGranted
                 LocationScreen(
                     showNextButton = locationAlreadyGranted,
-                    onSkip = onDone, // Callback to signify completion of the intro flow
+                    onSkip = onDone, 
                     onConfigure = {
                         if (locationAlreadyGranted) {
-                            onDone() // Permissions already granted, proceed to finish
+                            onDone() 
                         } else {
                             locationPermissionState.launchMultiplePermissionRequest()
                         }
@@ -130,4 +106,3 @@ fun AppIntroductionScreen(onDone: () -> Unit) {
 @Serializable private data object CriticalAlerts : NavKey
 
 @Serializable private data object Location : NavKey
-

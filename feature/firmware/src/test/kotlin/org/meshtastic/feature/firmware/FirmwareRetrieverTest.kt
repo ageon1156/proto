@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package org.meshtastic.feature.firmware
 
 import io.mockk.coEvery
@@ -43,12 +27,12 @@ class FirmwareRetrieverTest {
             )
         val expectedFile = File("firmware-heltec-v3-2.5.0.bin")
 
-        // Generic fast OTA check fails
+        
         coEvery { fileHandler.checkUrlExists(match { it.contains("mt-esp32s3-ota.bin") }) } returns false
-        // ZIP download fails too for the OTA attempt to reach second retrieve call
+        
         coEvery { fileHandler.downloadFile(any(), "firmware_release.zip", any()) } returns null
 
-        // Board-specific check succeeds
+        
         coEvery { fileHandler.checkUrlExists(match { it.contains("firmware-heltec-v3") }) } returns true
         coEvery { fileHandler.downloadFile(any(), "firmware-heltec-v3-2.5.0.bin", any()) } returns expectedFile
         coEvery { fileHandler.extractFirmware(any<File>(), any(), any(), any()) } returns null
@@ -187,4 +171,3 @@ class FirmwareRetrieverTest {
         }
     }
 }
-

@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 @file:Suppress("MagicNumber")
 
 package org.meshtastic.feature.map
@@ -151,7 +135,7 @@ fun MapView(
     var hasLocationPermission by remember { mutableStateOf(false) }
     val displayUnits by mapViewModel.displayUnits.collectAsStateWithLifecycle()
 
-    // Location tracking state
+    
     var isLocationTrackingEnabled by remember { mutableStateOf(false) }
     var followPhoneBearing by remember { mutableStateOf(false) }
 
@@ -180,14 +164,14 @@ fun MapView(
 
     val cameraPositionState = mapViewModel.cameraPositionState
 
-    // Save camera position when it stops moving
+    
     LaunchedEffect(cameraPositionState.isMoving) {
         if (!cameraPositionState.isMoving) {
             mapViewModel.saveCameraPosition(cameraPositionState.position)
         }
     }
 
-    // Location tracking functionality
+    
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
     val locationCallback = remember {
         object : LocationCallback() {
@@ -226,7 +210,7 @@ fun MapView(
         }
     }
 
-    // Start/stop location tracking based on state
+    
     LaunchedEffect(isLocationTrackingEnabled, hasLocationPermission) {
         if (isLocationTrackingEnabled && hasLocationPermission) {
             val locationRequest =
@@ -798,7 +782,7 @@ private fun speedFromPosition(position: Position, displayUnits: DisplayUnits): S
             when (displayUnits) {
                 DisplayUnits.METRIC -> "%.1f Km/h".format(position.groundSpeed.mpsToKmph())
                 DisplayUnits.IMPERIAL -> "%.1f mph".format(position.groundSpeed.mpsToMph())
-                else -> mpsText // Fallback or handle UNRECOGNIZED
+                else -> mpsText 
             }
         } else {
             mpsText
@@ -841,4 +825,3 @@ private fun offsetPolyline(
         SphericalUtil.computeOffset(point, abs(offsetMeters), perpendicularHeading)
     }
 }
-

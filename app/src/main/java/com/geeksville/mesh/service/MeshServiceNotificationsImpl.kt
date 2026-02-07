@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2025-2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package com.geeksville.mesh.service
 
 import android.app.Notification
@@ -78,12 +62,7 @@ import org.meshtastic.proto.TelemetryProtos
 import org.meshtastic.proto.TelemetryProtos.LocalStats
 import javax.inject.Inject
 
-/**
- * Manages the creation and display of all app notifications.
- *
- * This class centralizes notification logic, including channel creation, builder configuration, and displaying
- * notifications for various events like new messages, alerts, and service status changes.
- */
+
 @Suppress("TooManyFunctions", "LongParameterList")
 class MeshServiceNotificationsImpl
 @Inject
@@ -108,10 +87,7 @@ constructor(
         private const val PERSON_ICON_TEXT_SIZE_RATIO = 0.5f
     }
 
-    /**
-     * Sealed class to define the properties of each notification channel. This centralizes channel configuration and
-     * makes it type-safe.
-     */
+    
     private sealed class NotificationType(
         val channelId: String,
         val channelNameRes: StringResource,
@@ -181,7 +157,7 @@ constructor(
             )
 
         companion object {
-            // A list of all types for easy initialization.
+            
             fun allTypes() = listOf(
                 ServiceState,
                 DirectMessage,
@@ -200,10 +176,7 @@ constructor(
         notificationManager.cancelAll()
     }
 
-    /**
-     * Creates all necessary notification channels on devices running Android O or newer. This should be called once
-     * when the service is created.
-     */
+    
     override fun initChannels() {
         NotificationType.allTypes().forEach { type -> createNotificationChannel(type) }
     }
@@ -215,9 +188,9 @@ constructor(
         val channel =
             NotificationChannel(type.channelId, channelName, type.importance).apply {
                 lightColor = NOTIFICATION_LIGHT_COLOR
-                lockscreenVisibility = Notification.VISIBILITY_PUBLIC // Default, can be overridden
+                lockscreenVisibility = Notification.VISIBILITY_PUBLIC 
 
-                // Type-specific configurations
+                
                 when (type) {
                     NotificationType.ServiceState -> {
                         lockscreenVisibility = Notification.VISIBILITY_PRIVATE
@@ -250,7 +223,7 @@ constructor(
                         setSound(
                             alertSoundUri,
                             AudioAttributes.Builder()
-                                .setUsage(AudioAttributes.USAGE_ALARM) // More appropriate for an alert
+                                .setUsage(AudioAttributes.USAGE_ALARM) 
                                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                                 .build(),
                         )
@@ -269,7 +242,7 @@ constructor(
     var nextStatsUpdateMillis: Long = 0
     var cachedMessage: String? = null
 
-    // region Public Notification Methods
+    
     override fun updateServiceStateNotification(
         summaryString: String?,
         telemetry: TelemetryProtos.Telemetry?,
@@ -407,8 +380,8 @@ constructor(
             val postTime = sbn.postTime
 
             if (senderTitle != null && messageText != null) {
-                // For the summary, we're creating a generic Person for the sender from the active notification's title.
-                // We don't have the original Person object or its colors/ID, so we're just using the name.
+                
+                
                 val senderPerson = Person.Builder().setName(senderTitle).build()
                 messagingStyle.addMessage(messageText, postTime, senderPerson)
             }
@@ -428,7 +401,7 @@ constructor(
 
     override fun showAlertNotification(contactKey: String, name: String, alert: String) {
         val notification = createAlertNotification(contactKey, name, alert)
-        // Use a consistent, unique ID for each alert source.
+        
         notificationManager.notify(name.hashCode(), notification)
     }
 
@@ -455,9 +428,7 @@ constructor(
     override fun clearClientNotification(notification: MeshProtos.ClientNotification) =
         notificationManager.cancel(notification.toString().hashCode())
 
-    // endregion
-
-    // region Notification Creation
+    
     private fun createServiceStateNotification(name: String, message: String?, nextUpdateAt: Long?): Notification {
         val builder =
             commonBuilder(NotificationType.ServiceState)
@@ -513,7 +484,7 @@ constructor(
                 .setConversationTitle(channelName)
 
         history.forEach { msg ->
-            // Use the node attached to the message directly to ensure correct identification
+            
             val person =
                 Person.Builder()
                     .setName(msg.node.user.longName)
@@ -528,7 +499,7 @@ constructor(
 
             style.addMessage(text, msg.receivedTime, person)
 
-            // Add reactions as separate "messages" in history if they exist
+            
             msg.emojis.forEach { reaction ->
                 val reactorNode = nodeRepository.get().getNode(reaction.user.id)
                 val reactor =
@@ -660,9 +631,7 @@ constructor(
             }
             .build()
 
-    // endregion
-
-    // region Helper/Builder Methods
+    
     private val openAppIntent: PendingIntent by lazy {
         val intent = Intent(context, MainActivity::class.java).apply { flags = Intent.FLAG_ACTIVITY_SINGLE_TOP }
         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
@@ -779,11 +748,11 @@ constructor(
         val canvas = Canvas(bitmap)
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-        // Draw background circle
+        
         paint.color = backgroundColor
         canvas.drawCircle(PERSON_ICON_SIZE / 2f, PERSON_ICON_SIZE / 2f, PERSON_ICON_SIZE / 2f, paint)
 
-        // Draw initials
+        
         paint.color = foregroundColor
         paint.textSize = PERSON_ICON_SIZE * PERSON_ICON_TEXT_SIZE_RATIO
         paint.textAlign = Paint.Align.CENTER
@@ -800,16 +769,16 @@ constructor(
 
         return IconCompat.createWithBitmap(bitmap)
     }
-    // endregion
+    
 }
 
-// Extension function to format LocalStats into a readable string.
+
 private fun LocalStats?.formatToString(): String? = this?.allFields
     ?.mapNotNull { (k, v) ->
         when (k.name) {
             "num_online_nodes",
             "num_total_nodes",
-            -> null // Exclude these fields
+            -> null 
             "uptime_seconds" -> "Uptime: ${formatUptime(v as Int)}"
             "channel_utilization" -> "ChUtil: %.2f%%".format(v)
             "air_util_tx" -> "AirUtilTX: %.2f%%".format(v)
@@ -835,4 +804,3 @@ private fun TelemetryProtos.DeviceMetrics?.formatToString(): String? = this?.all
         }
     }
     ?.joinToString("\n")
-

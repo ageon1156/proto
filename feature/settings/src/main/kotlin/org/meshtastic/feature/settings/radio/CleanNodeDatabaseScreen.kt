@@ -1,20 +1,3 @@
-/*
- * Copyright (c) 2025 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package org.meshtastic.feature.settings.radio
 
 import androidx.compose.foundation.layout.Arrangement
@@ -59,10 +42,7 @@ import org.meshtastic.core.strings.clean_unknown_nodes
 import org.meshtastic.core.strings.nodes_queued_for_deletion
 import org.meshtastic.core.ui.component.NodeChip
 
-/**
- * Composable screen for cleaning the node database. Allows users to specify criteria for deleting nodes. The list of
- * nodes to be deleted updates automatically as filter criteria change.
- */
+
 @Composable
 fun CleanNodeDatabaseScreen(viewModel: CleanNodeDatabaseViewModel = hiltViewModel()) {
     val olderThanDays by viewModel.olderThanDays.collectAsState()
@@ -118,13 +98,7 @@ private const val MIN_UNKNOWN_DAYS_THRESHOLD = 0f
 private const val MIN_KNOWN_DAYS_THRESHOLD = 7f
 private const val MAX_DAYS_THRESHOLD = 365f
 
-/**
- * Composable for the "older than X days" filter. This filter is always active.
- *
- * @param olderThanDays The number of days for the filter.
- * @param onlyUnknownNodes Whether the "only unknown nodes" filter is enabled.
- * @param onDaysChanged Callback for when the number of days changes.
- */
+
 @Composable
 private fun DaysThresholdFilter(olderThanDays: Float, onlyUnknownNodes: Boolean, onDaysChanged: (Float) -> Unit) {
     val valueRange =
@@ -150,12 +124,7 @@ private fun DaysThresholdFilter(olderThanDays: Float, onlyUnknownNodes: Boolean,
     }
 }
 
-/**
- * Composable for the "only unknown nodes" filter.
- *
- * @param onlyUnknownNodes Whether the filter is enabled.
- * @param onCheckedChanged Callback for when the checked state changes.
- */
+
 @Composable
 private fun UnknownNodesFilter(onlyUnknownNodes: Boolean, onCheckedChanged: (Boolean) -> Unit) {
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -165,11 +134,7 @@ private fun UnknownNodesFilter(onlyUnknownNodes: Boolean, onCheckedChanged: (Boo
     }
 }
 
-/**
- * Composable for displaying the list of nodes queued for deletion.
- *
- * @param nodesToDelete The list of nodes to be deleted.
- */
+
 @Composable
 private fun NodesDeletionPreview(nodesToDelete: List<NodeEntity>) {
     Text(
@@ -187,13 +152,7 @@ private fun NodesDeletionPreview(nodesToDelete: List<NodeEntity>) {
     }
 }
 
-/**
- * Composable for the confirmation dialog before deleting nodes.
- *
- * @param nodesToDeleteCount The number of nodes to be deleted.
- * @param onConfirm Callback for when the user confirms the deletion.
- * @param onDismiss Callback for when the user dismisses the dialog.
- */
+
 @Composable
 private fun ConfirmationDialog(nodesToDeleteCount: Int, onConfirm: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
@@ -204,4 +163,3 @@ private fun ConfirmationDialog(nodesToDeleteCount: Int, onConfirm: () -> Unit, o
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(Res.string.cancel)) } },
     )
 }
-

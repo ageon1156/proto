@@ -1,20 +1,3 @@
-/*
- * Copyright (c) 2025 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package com.geeksville.mesh.repository.usb
 
 import android.app.Application
@@ -40,7 +23,7 @@ import org.meshtastic.core.di.ProcessLifecycle
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/** Repository responsible for maintaining and updating the state of USB connectivity. */
+
 @OptIn(ExperimentalCoroutinesApi::class)
 @Singleton
 class UsbRepository
@@ -55,10 +38,10 @@ constructor(
 ) {
     private val _serialDevices = MutableStateFlow(emptyMap<String, UsbDevice>())
 
-    @Suppress("unused") // Retained as public API
+    @Suppress("unused") 
     val serialDevices = _serialDevices.asStateFlow()
 
-    @Suppress("unused") // Retained as public API
+    @Suppress("unused") 
     val serialDevicesWithDrivers =
         _serialDevices
             .mapLatest { serialDevices ->
@@ -69,7 +52,7 @@ constructor(
             }
             .stateIn(processLifecycle.coroutineScope, SharingStarted.Eagerly, emptyMap())
 
-    @Suppress("unused") // Retained as public API
+    @Suppress("unused") 
     val serialDevicesWithPermission =
         _serialDevices
             .mapLatest { serialDevices ->
@@ -88,10 +71,7 @@ constructor(
         }
     }
 
-    /**
-     * Creates a USB serial connection to the specified USB device. State changes and data arrival result in async
-     * callbacks on the supplied listener.
-     */
+    
     fun createSerialConnection(device: UsbSerialDriver, listener: SerialConnectionListener): SerialConnection =
         SerialConnectionImpl(usbManagerLazy, device, listener)
 
@@ -105,4 +85,3 @@ constructor(
     private suspend fun refreshStateInternal() =
         withContext(dispatchers.default) { _serialDevices.emit(usbManagerLazy.get()?.deviceList ?: emptyMap()) }
 }
-

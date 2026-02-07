@@ -1,20 +1,3 @@
-/*
- * Copyright (c) 2025 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package org.meshtastic.feature.settings.radio.component
 
 import android.app.Activity
@@ -289,12 +272,10 @@ fun PrivateKeyRegenerateDialog(
                                 .apply {
                                     clearPrivateKey()
                                     clearPublicKey()
-                                    // Generate a random "f" value
+                                    
                                     val f = ByteArray(32).apply { SecureRandom().nextBytes(this) }
-                                    // Adjust the value to make it valid as an "s" value for eval().
-                                    // According to the specification we need to mask off the 3
-                                    // right-most bits of f[0], mask off the left-most bit of f[31],
-                                    // and set the second to left-most bit of f[31].
+                                    
+                                    
                                     f[0] = (f[0].toInt() and 0xF8).toByte()
                                     f[31] = ((f[31].toInt() and 0x7F) or 0x40).toByte()
                                     privateKey = ByteString.copyFrom(f)
@@ -310,4 +291,3 @@ fun PrivateKeyRegenerateDialog(
         )
     }
 }
-
