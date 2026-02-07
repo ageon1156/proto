@@ -304,7 +304,7 @@ fun MainScreen(uIViewModel: UIViewModel = hiltViewModel(), scanModel: BTScanMode
                         if (neighborInfo == null) {
                             
                             val hexPairs = Regex("""\b[0-9A-Fa-f]{2}\b""").findAll(input).map { it.value }.toList()
-                            @Suppress("detekt:MagicNumber") // byte offsets
+                            @Suppress("detekt:MagicNumber")
                             if (hexPairs.size >= 4) {
                                 val bytes = hexPairs.map { it.toInt(16).toByte() }.toByteArray()
                                 neighborInfo = runCatching { MeshProtos.NeighborInfo.parseFrom(bytes) }.getOrNull()
@@ -350,7 +350,7 @@ fun MainScreen(uIViewModel: UIViewModel = hiltViewModel(), scanModel: BTScanMode
                     } else {
                         val rawBytes = response.toByteArray()
 
-                        @Suppress("detekt:MagicNumber") // byte offsets
+                        @Suppress("detekt:MagicNumber")
                         val isBinary = response.any { it.code < 32 && it != '\n' && it != '\r' && it != '\t' }
                         if (isBinary) {
                             val hexString = rawBytes.joinToString(" ") { "%02X".format(it) }
@@ -385,14 +385,12 @@ fun MainScreen(uIViewModel: UIViewModel = hiltViewModel(), scanModel: BTScanMode
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination
     val topLevelDestination = TopLevelDestination.fromNavDestination(currentDestination)
 
-    // State for determining the connection type icon to display
     val selectedDevice by scanModel.selectedNotNullFlow.collectAsStateWithLifecycle()
 
-    // State for managing the glow animation around the Connections icon
     var currentGlowColor by remember { mutableStateOf(Color.Transparent) }
     val animatedGlowAlpha = remember { Animatable(0f) }
     val coroutineScope = rememberCoroutineScope()
-    val capturedColorScheme = colorScheme // Capture current colorScheme instance for LaunchedEffect
+    val capturedColorScheme = colorScheme
 
     val sendColor = capturedColorScheme.StatusGreen
     val receiveColor = capturedColorScheme.StatusBlue
@@ -405,13 +403,11 @@ fun MainScreen(uIViewModel: UIViewModel = hiltViewModel(), scanModel: BTScanMode
                 }
 
             currentGlowColor = newTargetColor
-            // Stop any existing animation and launch a new one.
-            // Launching in a new coroutine ensures the collect block is not suspended.
             coroutineScope.launch {
-                animatedGlowAlpha.stop() // Stop before snapping/animating
-                animatedGlowAlpha.snapTo(1.0f) // Show glow instantly
+                animatedGlowAlpha.stop()
+                animatedGlowAlpha.snapTo(1.0f)
                 animatedGlowAlpha.animateTo(
-                    targetValue = 0.0f, // Fade out
+                    targetValue = 0.0f,
                     animationSpec = tween(durationMillis = 1000, easing = LinearEasing),
                 )
             }
@@ -509,7 +505,6 @@ fun MainScreen(uIViewModel: UIViewModel = hiltViewModel(), scanModel: BTScanMode
                                 BadgedBox(
                                     badge = {
                                         if (destination == TopLevelDestination.Conversations) {
-                                            // Keep track of the last non-zero count for display during exit animation
                                             var lastNonZeroCount by remember { mutableIntStateOf(unreadMessageCount) }
                                             if (unreadMessageCount > 0) {
                                                 lastNonZeroCount = unreadMessageCount
@@ -539,7 +534,7 @@ fun MainScreen(uIViewModel: UIViewModel = hiltViewModel(), scanModel: BTScanMode
                             modifier =
                             if (navSuiteType == NavigationSuiteType.ShortNavigationBarCompact) {
                                 Modifier.width(1.dp)
-                                    .height(1.dp) // hide on phone - min 1x1 or talkback won't see it.
+                                    .height(1.dp)
                             } else {
                                 Modifier
                             },
@@ -619,18 +614,15 @@ private fun VersionChecks(viewModel: UIViewModel) {
                 Logger.d { "FirmwareEdition: ${edition.name}" }
                 when (edition) {
                     MeshProtos.FirmwareEdition.VANILLA -> {
-                        // Handle any specific logic for VANILLA firmware edition if needed
                     }
 
                     else -> {
-                        // Handle other firmware editions if needed
                     }
                 }
             }
         }
     }
 
-    // Check if the device is running an old app version or firmware version
     LaunchedEffect(connectionState, myNodeInfo) {
         if (connectionState == ConnectionState.Connected) {
             Logger.i {

@@ -353,11 +353,9 @@ fun annotateTraceroute(inString: String?): AnnotatedString {
                         }
                     withStyle(style = SpanStyle(color = snrColor, fontWeight = FontWeight.Bold)) { append(line) }
                 } else {
-                    // Append line as is if SNR value cannot be parsed
                     append(line)
                 }
             } else {
-                // Append non-SNR lines as is
                 append(line)
             }
         }
